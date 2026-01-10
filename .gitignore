@@ -1,0 +1,41 @@
+
+# Ignore STS / Eclipse metadata
+
+**/.classpath
+
+**/.project
+
+**/.settings/
+
+
+
+# Ignore IntelliJ metadata
+
+**/.idea/
+
+**/*.iml
+
+
+
+# Ignore build folders
+
+**/target/
+
+**/build/
+
+
+
+# Ignore logs
+
+**/*.log
+
+**/logs/
+
+
+
+# Ignore OS files
+
+.DS_Store
+
+Thumbs.db
+
