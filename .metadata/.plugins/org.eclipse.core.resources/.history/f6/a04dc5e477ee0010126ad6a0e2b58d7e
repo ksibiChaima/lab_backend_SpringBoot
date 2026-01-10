@@ -1,0 +1,220 @@
+package com.example.demo.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.beans.EventBean;
+import com.example.demo.beans.OutilBean;
+import com.example.demo.beans.PublicationBean;
+import com.example.demo.dao.*;
+import com.example.demo.entities.*;
+import com.example.demo.proxies.EventProxyService;
+import com.example.demo.proxies.OutilProxyService;
+import com.example.demo.proxies.PublicationProxyService;
+
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class MemberImpl implements IMemberService {
+
+    private MemberRepository memberRepository;
+    private EtudiantRepository etudiantRepository;
+    private EnseignantChercheurRepository enseignantChercheurRepository;
+    private MembrePubRepository membrePubRepository;
+    private MembreEventRepository membreEventRepository;
+    private MembreOutilRepository membreOutilRepository;
+
+    private EventProxyService eventProxyService;
+    private PublicationProxyService publicationProxyService;
+    private OutilProxyService outilProxyService;
+
+    // ================= CRUD =================
+
+    @Override
+    public Membre addMember(Membre m) {
+        return memberRepository.save(m);
+    }
+
+    @Override
+    public void deleteMember(Long id) {
+        memberRepository.deleteById(id);
+    }
+
+    @Override
+    public Membre updateMember(Membre m) {
+        return memberRepository.save(m);
+    }
+
+    @Override
+    public Membre findMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
+
+    @Override
+    public List<Membre> findAll() {
+        return memberRepository.findAll();
+    }
+
+    // ================= FILTERING =================
+
+    @Override
+    public Membre findByCin(String cin) {
+        return memberRepository.findByCin(cin);
+    }
+
+    @Override
+    public Membre findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<Membre> findByNom(String nom) {
+        return memberRepository.findByNom(nom);
+    }
+
+    // ================= ETUDIANT =================
+
+    @Override
+    public List<Etudiant> findByDiplome(String diplome) {
+        return etudiantRepository.findByDiplome(diplome);
+    }
+
+    @Override
+    public void affecterEtudiantEnseignant(Long idE, Long idEN) {
+        Etudiant etudiant = etudiantRepository.findById(idE)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        EnseignantChercheur encadrant = enseignantChercheurRepository.findById(idEN)
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+        etudiant.setEncadrant(encadrant);
+        etudiantRepository.save(etudiant);
+    }
+
+    @Override
+    public List<Etudiant> chercherParEncadrant(EnseignantChercheur ensch) {
+        return etudiantRepository.findByEncadrant(ensch);
+    }
+
+    // ================= ENSEIGNANT =================
+
+    @Override
+    public List<EnseignantChercheur> findByGrade(String grade) {
+        return enseignantChercheurRepository.findByGrade(grade);
+    }
+
+    @Override
+    public List<EnseignantChercheur> findByEtablissement(String etablissement) {
+        return enseignantChercheurRepository.findByEtablissement(etablissement);
+    }
+
+    // ================= PUBLICATIONS =================
+
+    @Override
+    public void affecterauteurTopublication(Long idauteur, Long idpub) {
+        Membre membre = findMember(idauteur);
+        Membre_Publication mp = new Membre_Publication(
+                new Membre_Pub_Id(idpub, idauteur), membre);
+        membrePubRepository.save(mp);
+    }
+
+    @Override
+    public List<PublicationBean> findPublicationparauteur(Long idauteur) {
+        List<PublicationBean> publications = new ArrayList<>();
+        List<Membre_Publication> links = membrePubRepository.findpubId(idauteur);
+
+        links.forEach(link ->
+                publications.add(
+                        publicationProxyService.findPublicationById(
+                                link.getId().getPublication_id()))
+        );
+        return publications;
+    }
+
+    // ================= EVENTS =================
+
+    @Override
+    public void affectEventToAuteur(Long idauteur, Long idEvent) {
+        Membre membre = findMember(idauteur);
+        Membre_Event me = new Membre_Event(
+                new Membre_Event_Id(idEvent, idauteur), membre);
+        membreEventRepository.save(me);
+    }
+
+    @Override
+    public List<EventBean> findAllEventparauteur(Long idauteur) {
+        List<EventBean> events = new ArrayList<>();
+        membreEventRepository.findEventsByMembreId(idauteur)
+                .forEach(e ->
+                        events.add(eventProxyService.findOneEventById(
+                                e.getId().getEvent_id()))
+                );
+        return events;
+    }
+
+    @Override
+    public List<EventBean> createEvent(Long idMembre, EventBean event) {
+        EventBean saved = eventProxyService.addEvent(event);
+        affectEventToAuteur(idMembre, saved.getId());
+        return findAllEventparauteur(idMembre);
+    }
+
+    @Override
+    public String deleteEvent(Long idMembre, Long idEvent) {
+        Optional<Membre_Event> me = membreEventRepository
+                .findById(new Membre_Event_Id(idEvent, idMembre));
+
+        if (me.isPresent()) {
+            eventProxyService.deleteEvent(idEvent);
+            membreEventRepository.delete(me.get());
+            return "Deleted Successfully";
+        }
+        return "ERROR: This member is not linked to this event";
+    }
+
+    // ================= OUTILS =================
+
+    @Override
+    public void affectOutilToAuteur(Long idauteur, Long idoutil) {
+        Membre membre = findMember(idauteur);
+        Membre_Outil mo = new Membre_Outil(
+                new Membre_Outil_Id(idoutil, idauteur), membre);
+        membreOutilRepository.save(mo);
+    }
+
+    @Override
+    public List<OutilBean> findAllOutilparauteur(Long idauteur) {
+        List<OutilBean> outils = new ArrayList<>();
+        membreOutilRepository.findOutilsByMembreId(idauteur)
+                .forEach(o ->
+                        outils.add(outilProxyService.findOneOutilById(
+                                o.getId().getOutil_id()))
+                );
+        return outils;
+    }
+
+    @Override
+    public List<OutilBean> createOutil(Long idMembre, OutilBean outil) {
+        OutilBean saved = outilProxyService.addOutil(outil);
+        affectOutilToAuteur(idMembre, saved.getId());
+        return findAllOutilparauteur(idMembre);
+    }
+
+    @Override
+    public String deleteOutil(Long idMembre, Long idoutil) {
+        Optional<Membre_Outil> mo = membreOutilRepository
+                .findById(new Membre_Outil_Id(idoutil, idMembre));
+
+        if (mo.isPresent()) {
+            outilProxyService.deleteOutil(idoutil);
+            membreOutilRepository.delete(mo.get());
+            return "Deleted Successfully";
+        }
+        return "ERROR: This member does not own this tool";
+    }
+}

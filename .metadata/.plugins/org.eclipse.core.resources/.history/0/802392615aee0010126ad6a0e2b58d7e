@@ -1,0 +1,184 @@
+package com.example.demo;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+
+import com.example.demo.beans.PublicationBean;
+import com.example.demo.dao.MemberRepository;
+import com.example.demo.entities.EnseignantChercheur;
+import com.example.demo.entities.Etudiant;
+import com.example.demo.entities.Membre;
+import com.example.demo.proxies.PublicationProxyService;
+import com.example.demo.service.IMemberService;
+
+import lombok.AllArgsConstructor;
+
+@SpringBootApplication
+@AllArgsConstructor
+@EnableDiscoveryClient
+@EnableFeignClients
+
+public class MemberApplication implements CommandLineRunner {
+	MemberRepository membreRepository;
+	 IMemberService memberService;
+	 PublicationProxyService publicationProxyService ;
+	 
+	public static void main(String[] args) {
+		SpringApplication.run(MemberApplication.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		//1.creation et enregistrement 2 etudiants 
+		Etudiant etd1=Etudiant.builder()
+				.cin("123456")
+				.dateInscription(new Date())
+				.dateNaissance(new Date())
+				.diplome("mastère")
+				.email("etd1@gmail.com")
+				.password("pass1")
+				.encadrant(null)
+				.cv("cv1")
+				.nom("abid")
+				.prenom("youssef")
+				.sujet("blockhain")
+				.build();
+		
+		Etudiant etd2=Etudiant.builder()
+				.cin("789101")
+				.dateInscription(new Date())
+				.dateNaissance(new Date())
+				.diplome("mastère")
+				.email("etd2@gmail.com")
+				.password("pass2")
+				.encadrant(null)
+				.cv("cv2")
+				.nom("Rekik")
+				.prenom("Ons")
+				.sujet("IA")
+				.build();
+		Etudiant etd3=Etudiant.builder()
+				.cin("789555")
+				.dateInscription(new Date())
+				.dateNaissance(new Date())
+				.diplome("mastère")
+				.email("etd3@gmail.com")
+				.password("pass3")
+				.encadrant(null)
+				.cv("cv3")
+				.nom("Rekik")
+				.prenom("Amer")
+				.sujet("IA")
+				.build();
+		membreRepository.save(etd1);
+		membreRepository.save(etd2);
+		membreRepository.save(etd3);
+		// 2. creation et enregistrement de 2 Enseinagnt chercheur
+		 EnseignantChercheur ens1 = EnseignantChercheur.builder()
+	                .cin("654321")
+	                .nom("Ben Ali")
+	                .prenom("Hatem")
+	                .dateNaissance(new Date())
+	                .cv("cv_ens1.pdf")
+	                .email("hatem.benali@enis.tn")
+	                .password("enspass1")
+	                .grade("Maître Assistant")
+	                .etablissement("ENIS")
+	                .build();
+
+	        EnseignantChercheur ens2 = EnseignantChercheur.builder()
+	                .cin("987654")
+	                .nom("Gharbi")
+	                .prenom("Sana")
+	                .dateNaissance(new Date())
+	                .cv("cv_ens2.pdf")
+	                .email("sana.gharbi@enis.tn")
+	                .password("enspass2")
+	                .grade("Professeur")
+	                .etablissement("ISIMS")
+	                .build();
+
+	        membreRepository.save(ens1);
+	        membreRepository.save(ens2);
+		//3.Afficher la liste des membres dans le labo
+	        System.out.println("=== Liste des membres du labo ===");
+	        membreRepository.findAll().forEach(m -> {
+	            System.out.println(m.getNom() + " " + m.getPrenom() + " (" + m.getEmail() + ")");
+	        });
+	        
+	        //4. Chercher un membre par ID
+	        
+	        Long idRecherche = 1L;
+			System.out.println("\n=== Recherche du membre avec ID " + idRecherche + " ===");
+			Membre membreCh = membreRepository.findById(idRecherche).get(); // on a ajouter .get()
+			//5. Modifier un membre
+			System.out.println("\n=== Modification du sujet de etd1 " );
+			etd1.setSujet("Federated Learning");
+			membreRepository.save(etd1);
+			
+			//6. Supprimer un membre
+			/*System.out.println("\n=== Suppression d un membre by id " );
+			 Long idDelete = ens2.getId();
+			membreRepository.deleteById(idDelete);
+			*/
+			
+			
+			// 7.test du requete chercher like @Query("select e from Membre e where e.nom like :mc")
+			System.out.println("\n=== chercher d un membre by mot " );
+			membreRepository.chercher("abid").forEach(m -> {
+			    System.out.println(" Trouvé : " + m.getNom() + " " + m.getPrenom());
+			});
+			
+			
+			//Tester la couche métier
+			System.out.println("\n Tester la couche métier " );
+			Membre m= memberService.findMember(1L);
+			 m.setCv("cv1.pdf");
+			 memberService.updateMember(m);
+			 // Delete a Member
+			 memberService.deleteMember(2L);
+			 
+			 
+			 //Tester affecter Encadrant 
+			 System.out.println("\n Tester affecter Encadrant " );
+			 //
+			 memberService.affecterEtudiantEnseignant(etd1.getId(), ens1.getId());
+
+		      // Vérifier le résultat
+		        Etudiant etd1After = (Etudiant) membreRepository.findById(etd1.getId()).get();
+		        System.out.println("Encadrant de " + etd1After.getNom() + " : " 
+		            + etd1After.getEncadrant().getNom() + " " + etd1After.getEncadrant().getPrenom());
+		        //affecter autre etudiant au meme encadrant
+		        memberService.affecterEtudiantEnseignant(etd3.getId(), ens1.getId());
+
+			      // Vérifier le résultat
+			        Etudiant etd2After = (Etudiant) membreRepository.findById(etd3.getId()).get();
+			        System.out.println("Encadrant de " + etd2After.getNom() + " : " 
+			            + etd2After.getEncadrant().getNom() + " " + etd2After.getEncadrant().getPrenom());
+		
+			     // 8️⃣ Tester chercherParEncadrant
+			        System.out.println("\n=== Tester chercherParEncadrant ===");
+			        List<Etudiant> etdsEncadres = memberService.chercherParEncadrant(ens1);
+			        if (etdsEncadres.isEmpty()) {
+			            System.out.println("Aucun étudiant encadré par " + ens1.getNom());
+			        } else {
+			            etdsEncadres.forEach(e -> {
+			                System.out.println("Étudiant encadré par " + ens1.getNom() + ": " + e.getNom() + " " + e.getPrenom());
+			            });
+			        }
+			        
+			    //  PublicationBean pub =  publicationProxyService.findPublicationById(1L);
+			      //  System.out.println("Titre du publication de pub id 1 : "+ pub.getTitre());
+			        
+			        //affectation des auteurs au publication // creation de table Member-publication 
+			        //memberService.affecterauteurTopublication(1L, 1L);
+			        //memberService.affecterauteurTopublication(1L, 2L);
+	}
+
+}

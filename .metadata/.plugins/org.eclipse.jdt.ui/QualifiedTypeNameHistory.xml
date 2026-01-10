@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.io.Serializable"/>
+    <fullyQualifiedTypeName name="java.lang.reflect.Member"/>
+    <fullyQualifiedTypeName name="java.util.Optional"/>
+    <fullyQualifiedTypeName name="java.lang.Long"/>
+    <fullyQualifiedTypeName name="org.springframework.data.jpa.repository.Query"/>
+    <fullyQualifiedTypeName name="com.example.demo.dao.EvenementRepository"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Evenement"/>
+    <fullyQualifiedTypeName name="com.example.demo.dao.OutilRepository"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Outil"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Publication"/>
+    <fullyQualifiedTypeName name="com.example.demo.dao.MemberRepository"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Membre"/>
+    <fullyQualifiedTypeName name="com.example.demo.dao.EtudiantRepository"/>
+    <fullyQualifiedTypeName name="com.example.demo.dao.EnseignantChercheurRepository"/>
+    <fullyQualifiedTypeName name="java.lang.Override"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Etudiant"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.EnseignantChercheur"/>
+    <fullyQualifiedTypeName name="io.micrometer.common.lang.NonNull"/>
+    <fullyQualifiedTypeName name="jakarta.persistence.Id"/>
+    <fullyQualifiedTypeName name="org.springframework.boot.CommandLineRunner"/>
+    <fullyQualifiedTypeName name="com.example.demo.dao.PublicationRepository"/>
+    <fullyQualifiedTypeName name="java.util.Date"/>
+    <fullyQualifiedTypeName name="org.springframework.stereotype.Service"/>
+    <fullyQualifiedTypeName name="lombok.AllArgsConstructor"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.RequestMethod"/>
+    <fullyQualifiedTypeName name="org.hibernate.mapping.List"/>
+    <fullyQualifiedTypeName name="lombok.Data"/>
+    <fullyQualifiedTypeName name="org.springframework.cloud.openfeign.FeignClient"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.GetMapping"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.PathVariable"/>
+    <fullyQualifiedTypeName name="com.example.demo.proxies.PublicationProxyService"/>
+    <fullyQualifiedTypeName name="com.example.demo.beans.PublicationBean"/>
+    <fullyQualifiedTypeName name="org.springframework.data.repository.query.Param"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="java.util.Collection"/>
+    <fullyQualifiedTypeName name="jakarta.persistence.Transient"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Membre_Publication"/>
+    <fullyQualifiedTypeName name="com.example.demo.entities.Membre_Pub_Id"/>
+    <fullyQualifiedTypeName name="com.example.demo.service.IMemberService"/>
+</qualifiedTypeNameHistroy>
