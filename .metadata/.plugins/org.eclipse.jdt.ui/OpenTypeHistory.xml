@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<typeInfoHistroy>
-    <typeInfo handle="=Member/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IMemberService.java[IMemberService" modifiers="513" timestamp="1768085915536"/>
-    <typeInfo handle="=Evenement/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IEvenementService.java[IEvenementService" modifiers="513" timestamp="1764067218722"/>
-    <typeInfo handle="=Outil/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IOutilService.java[IOutilService" modifiers="513" timestamp="1764066413636"/>
-    <typeInfo handle="=Publication/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IPublicationService.java[IPublicationService" modifiers="513" timestamp="1764065514021"/>
-    <typeInfo handle="=Member/C:\/Users\/chaym\/.m2\/repository\/org\/springframework\/data\/spring-data-jpa\/3.5.5\/spring-data-jpa-3.5.5.jar=/maven.pomderived=/true=/=/maven.groupId=/org.springframework.data=/=/maven.artifactId=/spring-data-jpa=/=/maven.version=/3.5.5=/=/maven.scope=/compile=/=/maven.pomderived=/true=/&lt;org.springframework.data.jpa.repository(JpaRepository.class[JpaRepository" modifiers="1537" timestamp="1762363678410"/>
-</typeInfoHistroy>

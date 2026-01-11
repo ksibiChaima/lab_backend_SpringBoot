@@ -1,2 +1,0 @@
-git add .gitignore
-git commit -m "Add .gitignore to ignore metadata and build files"
