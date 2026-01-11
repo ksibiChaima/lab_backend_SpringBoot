@@ -31,185 +31,198 @@ import com.example.demo.proxies.PublicationProxyService;
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor //injection du memeberRepository
+@AllArgsConstructor
 public class MemberImpl implements IMemberService {
-	
-	MemberRepository memberRepository;
-	EtudiantRepository etudiantRepository;
-	 EnseignantChercheurRepository  enseignantChercheurRepository;
-	 EventProxyService eventProxyService;
-	 PublicationProxyService proxy ;
-	 MembrePubRepository  membrepubrepository ;
-	 MembreEventRepository membreEventRepository;
-	 private MembreOutilRepository membreOutilRepository;
-		private OutilProxyService outilProxyService;
-	@Override
-	public Membre addMember(Membre m) {
-		memberRepository.save(m);
-		return m;
-	}
 
-	@Override
-	public void deleteMember(Long id) {
-		 memberRepository.deleteById(id);	
-	}
-	@Override
-	public Membre updateMember(Membre m) {
-	
-		return  memberRepository.saveAndFlush(m);
-	}
-	@Override
-	public Membre findMember(Long id) {
-		Membre m= (Membre)memberRepository.findById(id).get();
-		 return m;
-	}
+  private final MemberRepository memberRepository;
+  private final EtudiantRepository etudiantRepository;
+  private final EnseignantChercheurRepository enseignantChercheurRepository;
 
-	@Override
-	public List<Membre> findAll() {
-		return memberRepository.findAll();
-	}
-	@Override
-	public Membre findByCin(String cin) {
-		// TODO Auto-generated method stub
-			return memberRepository.findByCin(cin);
-	}
-	@Override
-	public Membre findByEmail(String email) {
-		// TODO Auto-generated method stub
-		return memberRepository.findByEmail(email);
-	}
-	@Override
-	public List<Membre> findByNom(String nom) {
-		// TODO Auto-generated method stub
-		 return memberRepository.findByNom(nom);
-	}
+  private final EventProxyService eventProxyService;
+  private final OutilProxyService outilProxyService;
+  private final PublicationProxyService publicationProxyService;
 
-	@Override
-	public List<Etudiant> findByDiplome(String diplome) {
-		 return etudiantRepository.findByDiplome(diplome);
-	}
+  private final MembrePubRepository membrePubRepository;
+  private final MembreEventRepository membreEventRepository;
+  private final MembreOutilRepository membreOutilRepository;
 
-	@Override
-	public List<EnseignantChercheur> findByGrade(String grade) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+  @Override
+  public Membre addMember(Membre m) {
+    return memberRepository.save(m);
+  }
 
-	@Override
-	public List<EnseignantChercheur> findByEtablissement(String etablissement) {
-		return
-				 enseignantChercheurRepository.findByEtablissement(etablissement);
-	}
-	 public void affecterEtudiantEnseignant(Long idE,Long idEN) {
-		 Etudiant ed= etudiantRepository.findById(idE).get();
-		 EnseignantChercheur ens= enseignantChercheurRepository.findById(idEN).get();
-		 ed.setEncadrant(ens);
-		 etudiantRepository.save(ed);
-		 
-	 }
-	 public List<Etudiant> chercherParEncadrant(EnseignantChercheur ensch){
-		return  etudiantRepository.findByEncadrant(ensch);
-		}
-	
-	 public void affecterauteurTopublication(Long idauteur, Long idpub) 
-	 {
-			Membre mbr = memberRepository.findById(idauteur).get();
-			Membre_Publication mbs = new Membre_Publication();
-			mbs.setAuteur(mbr);
-			mbs.setId(new Membre_Pub_Id(idpub, idauteur));
-			membrepubrepository.save(mbs);
-	  }
+  @Override
+  public void deleteMember(Long id) {
+    memberRepository.deleteById(id);
+  }
 
-	@Override
-	public List<PublicationBean> findPublicationparauteur(Long idauteur) {
-		List<PublicationBean> pubs=new ArrayList<PublicationBean>();
-		 List< Membre_Publication> 
-		idpubs=membrepubrepository.findpubId(idauteur);
-		
-		 idpubs.forEach(s->{
-			 System.out.println(s);
-			 pubs.add(proxy.findPublicationById(s.getId().getPublication_id()));
-			 }
-			 );
+  @Override
+  public Membre updateMember(Membre m) {
+    return memberRepository.saveAndFlush(m);
+  }
 
-		 
-		 return pubs;
-	 }
+  @Override
+  public Membre findMember(Long id) {
+    return memberRepository.findById(id).orElseThrow();
+  }
 
-//implimenetation du events services 
-	 
-	
-	public void affectEventToAuteur(Long idauteur, Long idevent) {
-		Membre mbr =  memberRepository.findById(idauteur).get();
-		Membre_Event mbs = new Membre_Event();
-		mbs.setMembre(mbr);
-		mbs.setId(new Membre_Event_Id(idevent, idauteur));
-		membreEventRepository.save(mbs);
-	}
+  @Override
+  public List<Membre> findAll() {
+    return memberRepository.findAll();
+  }
 
-	public List<EventBean> findAllEventparauteur(Long idauteur) {
-		List<EventBean> events = new ArrayList<EventBean>();
-		List<Membre_Event> idevents = membreEventRepository.findEventsByMembreId(idauteur);
-		idevents.forEach(s -> {
-			System.out.println(s);
-			events.add(eventProxyService.findOneEventById(s.getId().getEvent_id()));
-		});
-		return events;
-	}
+  @Override
+  public Membre findByCin(String cin) {
+    return memberRepository.findByCin(cin);
+  }
 
-	@Override
-	public List<EventBean> createEvent(Long idMembre, EventBean event) {
-		Membre mbr =  memberRepository.findById(idMembre).get();
-		EventBean o = eventProxyService.addEvent(event);
-		membreEventRepository.save(new Membre_Event(new Membre_Event_Id(mbr.getId(), o.getId()), mbr));
-		return this.findAllEventparauteur(idMembre);
-	}
+  @Override
+  public Membre findByEmail(String email) {
+    return memberRepository.findByEmail(email);
+  }
 
-	@Override
-	public String deleteEvent(Long idMembre, Long idevent) {
-		java.util.Optional<Membre_Event> mbr_event = membreEventRepository.findById(new Membre_Event_Id(idevent, idMembre));
-		if (!mbr_event.isEmpty()) {
-			eventProxyService.deleteEvent(idevent);
-			membreEventRepository.delete(mbr_event.get());
-			return "Deleted Successfully";
-		}
-		return "ERROR: This member is not a member of this event";
-	}
+  @Override
+  public List<Membre> findByNom(String nom) {
+    return memberRepository.findByNom(nom);
+  }
 
-//outils 
-	public void affectOutilToAuteur(Long idauteur, Long idoutil) {
-		Membre mbr =  memberRepository.findById(idauteur).get();
-		Membre_Outil mbs = new Membre_Outil();
-		mbs.setMembre(mbr);
-		mbs.setId(new Membre_Outil_Id(idoutil, idauteur));
-		membreOutilRepository.save(mbs);
-	}
+  @Override
+  public List<Etudiant> findByDiplome(String diplome) {
+    return etudiantRepository.findByDiplome(diplome);
+  }
 
-	public List<OutilBean> findAllOutilparauteur(Long idauteur) {
-		List<OutilBean> outils = new ArrayList<OutilBean>();
-		List<Membre_Outil> idoutils = membreOutilRepository.findOutilsByMembreId(idauteur);
-		idoutils.forEach(s -> {
-			System.out.println(s);
-			outils.add(outilProxyService.findOneOutilById(s.getId().getOutil_id()));
-		});
-		return outils;
-	}
+  @Override
+  public List<EnseignantChercheur> findByGrade(String grade) {
+    return enseignantChercheurRepository.findByGrade(grade);
+  }
 
-	@Override
-	public List<OutilBean> createOutil(Long idMembre, OutilBean outil) {
-		Membre mbr =  memberRepository.findById(idMembre).get();
-		OutilBean o = outilProxyService.addOutil(outil);
-		membreOutilRepository.save(new Membre_Outil(new Membre_Outil_Id(mbr.getId(), o.getId()), mbr));
-		return this.findAllOutilparauteur(idMembre);
-	}
-	
-	public String deleteOutil(Long idMembre, Long idoutil) {
-		Optional<Membre_Outil> mbr_outil = membreOutilRepository.findById(new Membre_Outil_Id(idoutil, idMembre));
-		if(!mbr_outil.isEmpty()) {
-			outilProxyService.deleteOutil(idoutil);
-			membreOutilRepository.delete(mbr_outil.get());
-			return "Deleted Successfully";
-		}
-		return "ERROR: This member does not own this tool";
-	}
+  @Override
+  public List<EnseignantChercheur> findByEtablissement(String etablissement) {
+    return enseignantChercheurRepository.findByEtablissement(etablissement);
+  }
+
+  @Override
+  public void affecterEtudiantEnseignant(Long idE, Long idEN) {
+    Etudiant ed = etudiantRepository.findById(idE).orElseThrow();
+    EnseignantChercheur ens = enseignantChercheurRepository.findById(idEN).orElseThrow();
+    ed.setEncadrant(ens);
+    etudiantRepository.save(ed);
+  }
+
+  @Override
+  public List<Etudiant> chercherParEncadrant(EnseignantChercheur ensch) {
+    return etudiantRepository.findByEncadrant(ensch);
+  }
+
+  @Override
+  public void affecterauteurTopublication(Long idauteur, Long idpub) {
+    Membre mbr = memberRepository.findById(idauteur).orElseThrow();
+    Membre_Publication mbs = new Membre_Publication();
+    mbs.setAuteur(mbr);
+    mbs.setId(new Membre_Pub_Id(idpub, idauteur));
+    membrePubRepository.save(mbs);
+  }
+
+  @Override
+  public List<PublicationBean> findPublicationparauteur(Long idauteur) {
+    List<PublicationBean> pubs = new ArrayList<>();
+    List<Membre_Publication> idpubs = membrePubRepository.findpubId(idauteur);
+
+    idpubs.forEach(s -> pubs.add(publicationProxyService.findPublicationById(s.getId().getPublication_id())));
+    return pubs;
+  }
+
+  // EVENTS
+
+  @Override
+  public void affectEventToAuteur(Long idauteur, Long idevent) {
+    Membre mbr = memberRepository.findById(idauteur).orElseThrow();
+    Membre_Event mbs = new Membre_Event();
+    mbs.setMembre(mbr);
+    mbs.setId(new Membre_Event_Id(idevent, idauteur));
+    membreEventRepository.save(mbs);
+  }
+
+  @Override
+  public List<EventBean> findAllEventparauteur(Long idauteur) {
+    List<EventBean> events = new ArrayList<>();
+    List<Membre_Event> idevents = membreEventRepository.findEventsByMembreId(idauteur);
+    idevents.forEach(s -> events.add(eventProxyService.findOneEventById(s.getId().getEvent_id())));
+    return events;
+  }
+
+  @Override
+  public List<EventBean> createEvent(Long idMembre, EventBean event) {
+    Membre mbr = memberRepository.findById(idMembre).orElseThrow();
+    EventBean created = eventProxyService.addEvent(event);
+
+    // ✅ Correct order: (event_id, membre_id)
+    membreEventRepository.save(new Membre_Event(new Membre_Event_Id(created.getId(), mbr.getId()), mbr));
+
+    return this.findAllEventparauteur(idMembre);
+  }
+
+  @Override
+  public String deleteEvent(Long idMembre, Long idevent) {
+    Optional<Membre_Event> mbr_event = membreEventRepository.findById(new Membre_Event_Id(idevent, idMembre));
+    if (mbr_event.isPresent()) {
+      eventProxyService.deleteEvent(idevent);
+      membreEventRepository.delete(mbr_event.get());
+      return "Deleted Successfully";
+    }
+    return "ERROR: This member is not a member of this event";
+  }
+
+  // OUTILS
+
+  @Override
+  public void affectOutilToAuteur(Long idauteur, Long idoutil) {
+    Membre mbr = memberRepository.findById(idauteur).orElseThrow();
+    Membre_Outil mbs = new Membre_Outil();
+    mbs.setMembre(mbr);
+    mbs.setId(new Membre_Outil_Id(idoutil, idauteur));
+    membreOutilRepository.save(mbs);
+  }
+
+  @Override
+  public List<OutilBean> findAllOutilparauteur(Long idauteur) {
+    List<OutilBean> outils = new ArrayList<>();
+    List<Membre_Outil> idoutils = membreOutilRepository.findOutilsByMembreId(idauteur);
+    idoutils.forEach(s -> outils.add(outilProxyService.findOneOutilById(s.getId().getOutil_id())));
+    return outils;
+  }
+
+  @Override
+  public List<OutilBean> createOutil(Long idMembre, OutilBean outil) {
+    Membre mbr = memberRepository.findById(idMembre).orElseThrow();
+    OutilBean created = outilProxyService.addOutil(outil);
+
+    // ✅ Correct order: (outil_id, membre_id)
+    membreOutilRepository.save(new Membre_Outil(new Membre_Outil_Id(created.getId(), mbr.getId()), mbr));
+
+    return this.findAllOutilparauteur(idMembre);
+  }
+
+  @Override
+  public String deleteOutil(Long idMembre, Long idoutil) {
+    Optional<Membre_Outil> mbr_outil = membreOutilRepository.findById(new Membre_Outil_Id(idoutil, idMembre));
+    if (mbr_outil.isPresent()) {
+      outilProxyService.deleteOutil(idoutil);
+      membreOutilRepository.delete(mbr_outil.get());
+      return "Deleted Successfully";
+    }
+    return "ERROR: This member does not own this tool";
+  }
+
+@Override
+public List<EventBean> findEvenementsParMembre(Long membreId) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+
+public List<OutilBean> findOutilsParAuteur(Long membreId) {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

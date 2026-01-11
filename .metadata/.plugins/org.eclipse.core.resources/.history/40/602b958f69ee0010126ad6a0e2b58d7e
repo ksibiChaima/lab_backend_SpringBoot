@@ -1,4 +1,0 @@
-server.port=9000
-
-spring.cloud.discovery.enabled=true
-spring.application.name=Gateway

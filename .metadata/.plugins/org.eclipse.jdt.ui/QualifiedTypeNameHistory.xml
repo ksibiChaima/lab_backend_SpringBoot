@@ -2,7 +2,6 @@
 <qualifiedTypeNameHistroy>
     <fullyQualifiedTypeName name="java.io.Serializable"/>
     <fullyQualifiedTypeName name="java.lang.reflect.Member"/>
-    <fullyQualifiedTypeName name="java.util.Optional"/>
     <fullyQualifiedTypeName name="java.lang.Long"/>
     <fullyQualifiedTypeName name="org.springframework.data.jpa.repository.Query"/>
     <fullyQualifiedTypeName name="com.example.demo.dao.EvenementRepository"/>
@@ -39,4 +38,8 @@
     <fullyQualifiedTypeName name="com.example.demo.entities.Membre_Publication"/>
     <fullyQualifiedTypeName name="com.example.demo.entities.Membre_Pub_Id"/>
     <fullyQualifiedTypeName name="com.example.demo.service.IMemberService"/>
+    <fullyQualifiedTypeName name="com.example.demo.beans.OutilBean"/>
+    <fullyQualifiedTypeName name="com.example.demo.beans.EventBean"/>
+    <fullyQualifiedTypeName name="org.apache.el.stream.Optional"/>
+    <fullyQualifiedTypeName name="java.util.Optional"/>
 </qualifiedTypeNameHistroy>

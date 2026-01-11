@@ -45,5 +45,7 @@ public interface IMemberService {
 		public List<EventBean> findAllEventparauteur (Long idauteur);
 		public List<EventBean> createEvent(Long idMembre, EventBean event);
 		public String deleteEvent(Long idMembre, Long idEvent);
+		List<EventBean> findEvenementsParMembre(Long membreId);
+		List<OutilBean> findOutilsParAuteur(Long membreId);
 		
 }

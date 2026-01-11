@@ -35,7 +35,7 @@
 	</section>
 	<section name="NewClassWizardPage">
 		<item key="create_constructor" value="false"/>
-		<item key="create_unimplemented" value="false"/>
+		<item key="create_unimplemented" value="true"/>
 	</section>
 	<section name="NewEnumCreationWizard.dialogBounds">
 		<item key="DIALOG_X_ORIGIN" value="619"/>

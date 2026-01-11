@@ -11,9 +11,9 @@ import com.example.demo.entities.Membre;
 
 public interface MemberRepository extends JpaRepository<Membre, Long> {
 	
-	@Query("select e from Membre e where e.nom like :x")
-	public List<Etudiant> chercher(@Param("x") String mc);
-	
+	@Query("select m from Membre m where m.nom like %:x%")
+	List<Membre> chercher(@Param("x") String mc);
+
 	Membre findByCin(String cin);
 	List<Membre>findByNomStartingWith(String caractere);
 	Membre findByEmail(String email);

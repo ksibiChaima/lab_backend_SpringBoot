@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <typeInfoHistroy>
-    <typeInfo handle="=Member/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IMemberService.java[IMemberService" modifiers="513" timestamp="1764836916074"/>
+    <typeInfo handle="=Member/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IMemberService.java[IMemberService" modifiers="513" timestamp="1768085915536"/>
     <typeInfo handle="=Evenement/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IEvenementService.java[IEvenementService" modifiers="513" timestamp="1764067218722"/>
     <typeInfo handle="=Outil/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IOutilService.java[IOutilService" modifiers="513" timestamp="1764066413636"/>
     <typeInfo handle="=Publication/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.demo.service{IPublicationService.java[IPublicationService" modifiers="513" timestamp="1764065514021"/>

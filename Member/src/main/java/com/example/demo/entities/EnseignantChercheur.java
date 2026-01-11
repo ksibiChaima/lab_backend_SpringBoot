@@ -20,7 +20,7 @@ import lombok.Setter;
 
 public class EnseignantChercheur extends Membre {
 	private static final long serialVersionUID = 1L;
-	@Temporal(TemporalType.DATE)
+	
 	private String grade;
 	private String etablissement;
 	
