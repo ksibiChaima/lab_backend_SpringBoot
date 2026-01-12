@@ -13,7 +13,7 @@ public class EventBean {
   private Long id;
   private String titre;
 
-  @JsonFormat(pattern = "yyyy-MM-dd")
+ 
   private LocalDate date;
 
   private String lieu;

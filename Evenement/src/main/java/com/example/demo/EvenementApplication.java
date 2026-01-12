@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import com.example.demo.dao.EvenementRepository;
 import com.example.demo.dao.MemberRepository;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 @EnableDiscoveryClient
 @SpringBootApplication
 @AllArgsConstructor
+
 public class EvenementApplication implements CommandLineRunner {
 	  EvenementRepository evenementRepository ;
 	  IEvenementService evenementService; 

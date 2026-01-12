@@ -76,6 +76,23 @@ public class MemberRestController {
     mbr.setEvents(memberService.findAllEventparauteur(id));
     return mbr;
   }
+  @GetMapping("/membres/full")
+  public List<Membre> findAllFullMembers() {
+      List<Membre> membres = memberService.findAll();
+      
+      for (Membre membre : membres) {
+          membre.setPubs(memberService.findPublicationparauteur(membre.getId()));
+          membre.setOutils(memberService.findAllOutilparauteur(membre.getId()));
+          membre.setEvents(memberService.findAllEventparauteur(membre.getId()));
+      }
+      
+      return membres;
+  }
+  @PutMapping(value = "/membres/{id}")
+  public Membre updateMembre(@PathVariable("id") Long id, @RequestBody Membre m) {
+      m.setId(id);
+      return memberService.updateMember(m);
+  }
 
   // -----------------------------
   // Endpoints relations (API clean)

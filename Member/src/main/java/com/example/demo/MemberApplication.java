@@ -9,11 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import com.example.demo.beans.EventBean;
+import com.example.demo.beans.OutilBean;
 import com.example.demo.beans.PublicationBean;
 import com.example.demo.dao.MemberRepository;
 import com.example.demo.entities.EnseignantChercheur;
 import com.example.demo.entities.Etudiant;
 import com.example.demo.entities.Membre;
+import com.example.demo.proxies.EventProxyService;
+import com.example.demo.proxies.OutilProxyService;
 import com.example.demo.proxies.PublicationProxyService;
 import com.example.demo.service.IMemberService;
 
@@ -28,6 +32,8 @@ public class MemberApplication implements CommandLineRunner {
 	MemberRepository membreRepository;
 	 IMemberService memberService;
 	 PublicationProxyService publicationProxyService ;
+	  OutilProxyService outilProxyService;
+	  EventProxyService eventProxyService;
 	 
 	public static void main(String[] args) {
 		SpringApplication.run(MemberApplication.class, args);
@@ -122,11 +128,7 @@ public class MemberApplication implements CommandLineRunner {
 			etd1.setSujet("Federated Learning");
 			membreRepository.save(etd1);
 			
-			//6. Supprimer un membre
-			/*System.out.println("\n=== Suppression d un membre by id " );
-			 Long idDelete = ens2.getId();
-			membreRepository.deleteById(idDelete);
-			*/
+		
 			
 			
 			// 7.test du requete chercher like @Query("select e from Membre e where e.nom like :mc")
@@ -142,7 +144,7 @@ public class MemberApplication implements CommandLineRunner {
 			 m.setCv("cv1.pdf");
 			 memberService.updateMember(m);
 			 // Delete a Member
-			 memberService.deleteMember(2L);
+			// memberService.deleteMember(2L);
 			 
 			 
 			 //Tester affecter Encadrant 
@@ -173,12 +175,73 @@ public class MemberApplication implements CommandLineRunner {
 			            });
 			        }
 			        
-			    //  PublicationBean pub =  publicationProxyService.findPublicationById(1L);
-			      //  System.out.println("Titre du publication de pub id 1 : "+ pub.getTitre());
+			    PublicationBean pub =  publicationProxyService.findPublicationById(1L);
+			       System.out.println("Titre du publication de pub id 1 : "+ pub.getTitre());
 			        
 			        //affectation des auteurs au publication // creation de table Member-publication 
-			        //memberService.affecterauteurTopublication(1L, 1L);
-			        //memberService.affecterauteurTopublication(1L, 2L);
+			        memberService.affecterauteurTopublication(1L, 1L);
+			        memberService.affecterauteurTopublication(1L, 2L);
+			        memberService.affecterauteurTopublication(3L, 2L);
+			       // Test Code - Affect Tool & Event to Member
+			       
+			            Long memberId = 1L;  // Use an existing member ID
+			            
+			            try {
+			                // ===== STEP 1: Create Tool in OUTIL microservice =====
+			                System.out.println("\n1. Creating tool in OUTIL service...");
+			                OutilBean newTool = new OutilBean();
+			                newTool.setSource("GitHub - ML Models");
+			                
+			                
+			                OutilBean createdTool = outilProxyService.addOutil(newTool);
+			                Long toolId = createdTool.getId();
+			                System.out.println(" Tool created with ID: " + toolId);
+			                
+			                // ===== STEP 2: Affect Tool to Member =====
+			                System.out.println("\n2. Affecting tool to member...");
+			                memberService.affectOutilToAuteur(memberId, toolId);
+			                System.out.println(" Tool affected to member");
+			                memberService.affectOutilToAuteur(2L, toolId);
+			                System.out.println(" Tool affected to member");
+			                
+			                // ===== STEP 3: Verify - Get Member's Tools =====
+			                System.out.println("\n3. Verifying member's tools...");
+			                List<OutilBean> memberTools = memberService.findAllOutilparauteur(memberId);
+			                System.out.println(" Member has " + memberTools.size() + " tool(s)");
+			                memberTools.forEach(t -> System.out.println("   - " + t.getSource()));
+			                
+			                // ===== STEP 4: Create Event in EVENEMENT microservice =====
+			                System.out.println("\n4. Creating event in EVENEMENT service...");
+			                EventBean newEvent = new EventBean();
+			                newEvent.setTitre("Conference on AI");
+			                newEvent.setLieu("Tunis");
+			             
+			                EventBean createdEvent = eventProxyService.addEvent(newEvent);
+			                Long eventId = createdEvent.getId();
+			                System.out.println("✅ Event created with ID: " + eventId);
+			                
+			                // ===== STEP 5: Affect Event to Member =====
+			                System.out.println("\n5. Affecting event to member...");
+			                memberService.affectEventToAuteur(memberId, eventId);
+			                System.out.println(" Event affected to member");
+			                //affecter a un autre member 
+			                memberService.affectEventToAuteur(3L, 2L);
+			                System.out.println(" Event affected to member");
+			                
+			                // ===== STEP 6: Verify - Get Member's Events =====
+			                System.out.println("\n6. Verifying member's events...");
+			                List<EventBean> memberEvents = memberService.findAllEventparauteur(memberId);
+			                System.out.println(" Member has " + memberEvents.size() + " event(s)");
+			                memberEvents.forEach(e -> System.out.println("   - " + e.getTitre() + " at " + e.getLieu()));
+			                
+			                System.out.println("\n=== TEST COMPLETE ===");
+			                
+			            } catch (Exception e) {
+			                System.err.println(" Error during test:");
+			                e.printStackTrace();
+			            }
+			       
+			}
 	}
+	
 
-}

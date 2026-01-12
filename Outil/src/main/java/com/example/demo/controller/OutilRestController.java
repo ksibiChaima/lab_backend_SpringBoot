@@ -39,7 +39,7 @@ public class OutilRestController {
 
    
 
-    @PostMapping
+    @PostMapping("/outils")
     public Outil addOutil(@RequestBody Outil o) {
         return outilService.saveOutil(o);
     }
